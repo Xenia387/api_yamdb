@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
 from users.models import User
-from .serializers import (
+from users.serializers import (
     UserCreateSerializer,
     UserRecieveTokenSerializer,
 )
