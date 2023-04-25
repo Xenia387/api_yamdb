@@ -4,24 +4,38 @@ from rest_framework import serializers
 from users.models import User
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
+class UserSignupSerializer(serializers.Serializer):
 
-    class Meta:
-        model = User
-        fields = (
-            'username',
-            'email'
-        )
+    username = serializers.RegexField(
+        regex=r'' + UnicodeUsernameValidator.regex,
+        max_length=150,
+        required=True
+    )
+    email = serializers.EmailField(
+        max_length=254,
+        required=True
+    )
+
+    def validate_username(self, value):
+        if value == 'me':
+            raise serializers.ValidationError(
+                'Нельзя использовать username "me".'
+            )
+        return value
 
     def validate(self, data):
-        if User.objects.filter(username=data.get('username')):
-            raise serializers.ValidationError(
-                'Пользователь с таким username уже существует.'
-            )
-        if User.objects.filter(email=data.get('email')):
-            raise serializers.ValidationError(
-                'Пользователь с таким email уже существует.'
-            )
+        if User.objects.filter(email=data['email']).exists():
+            user = User.objects.get(email=data['email'])
+            if user.username != data['username']:
+                raise serializers.ValidationError(
+                    'Для этого email уже существует другой пользователь'
+                )
+        if User.objects.filter(username=data['username']).exists():
+            user = User.objects.get(username=data['username'])
+            if user.email != data['email']:
+                raise serializers.ValidationError(
+                    'Для этого пользователя указан другой email'
+                )
         return data
 
 
