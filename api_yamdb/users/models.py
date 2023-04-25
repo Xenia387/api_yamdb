@@ -27,5 +27,17 @@ class User(AbstractUser):
         blank=False
     )
 
+    @property
+    def is_admin(self):
+        return (
+            self.role == self.UserRoles.ADMIN
+            or self.is_superuser
+            or self.is_staff
+        )
+
+    @property
+    def is_moderator(self):
+        return self.role == self.UserRoles.MODERATOR
+
     class Meta:
         ordering = ('username',)
