@@ -8,6 +8,7 @@ from users.models import User
 from .serializers import (
     UserSignupSerializer,
     UserRecieveTokenSerializer,
+    UserSerializer,
 )
 from .utils import send_confirmation_code
 
@@ -59,3 +60,9 @@ class UserReceiveTokenViewSet(
             {'token': str(AccessToken.for_user(user))},
             status=status.HTTP_200_OK
         )
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = (permissions.AllowAny,)
