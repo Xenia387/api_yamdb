@@ -1,6 +1,7 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 
+from reviews.models import Category, Genre, GenreTitle, Title
 from users.models import User
 
 
@@ -63,4 +64,67 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'bio',
             'role'
+        )
+
+
+class CategorySerializer(serializers.Seriazlizer):
+
+    class Meta:
+        model = Category
+        fields = (
+            'id',
+            'name',
+            'slug',
+        )
+        read_only_fields = (
+            'id',
+            'name',
+            'slug',        )
+
+
+class GenreSerializer(serializers.Seriazlizer):
+
+    class Meta:
+        model = Genre
+        fields = (
+            'id',
+            'name',
+            'slug',
+        )
+        read_only_fields = (
+            'id',
+            'name',
+            'slug',
+        )
+
+
+class TitleSerializer(serializers.Seriazlizer):
+
+    class Meta:
+        model = Title
+        fields = (
+            'id',
+            'name',
+            'year',
+            'category'
+        )
+        read_only_fields = (
+            'id',
+            'name',
+            'year',
+            'category',
+        )
+
+
+class GenreTitleSerializer(serializers.Seriazlizer):
+
+    class Meta:
+        model = GenreTitle
+        fields = (
+            'title_id',
+            'genre_id'
+        )
+        read_only_fields = (
+            'title_id',
+            'genre_id'
         )
