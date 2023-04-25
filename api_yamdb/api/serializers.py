@@ -67,7 +67,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class CategorySerializer(serializers.Seriazlizer):
+class CategorySerializer(serializers.Serializer):
 
     class Meta:
         model = Category
@@ -79,10 +79,11 @@ class CategorySerializer(serializers.Seriazlizer):
         read_only_fields = (
             'id',
             'name',
-            'slug',        )
+            'slug',
+        )
 
 
-class GenreSerializer(serializers.Seriazlizer):
+class GenreSerializer(serializers.Serializer):
 
     class Meta:
         model = Genre
@@ -98,7 +99,7 @@ class GenreSerializer(serializers.Seriazlizer):
         )
 
 
-class TitleSerializer(serializers.Seriazlizer):
+class TitleSerializer(serializers.Serializer):
 
     class Meta:
         model = Title
@@ -116,7 +117,7 @@ class TitleSerializer(serializers.Seriazlizer):
         )
 
 
-class GenreTitleSerializer(serializers.Seriazlizer):
+class GenreTitleSerializer(serializers.Serializer):
 
     class Meta:
         model = GenreTitle
