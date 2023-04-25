@@ -45,6 +45,7 @@ class Title(models.Model):
     category = models.OneToOneField(
         Category,
         on_delete=models.SET_NULL,
+        related_name='title',
         verbose_name='Категория произведения'
     ),
 
@@ -55,10 +56,12 @@ class Title(models.Model):
 class GenreTitle(models.Model):
     title_id = models.ForeignKey(
         Title,
-        verbose_name='Произведение'
+        verbose_name='Произведение',
+        related_name='title',
     )
     genre_id = models.ForeignKey(
         Genre,
         verbose_name='Жанр(ы)',
         on_delete=models.SET_NULL,
+        related_name='genre',
     )
