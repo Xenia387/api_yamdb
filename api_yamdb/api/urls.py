@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import (
-    UserCreateViewSet,
+    UserSignupViewSet,
     UserReceiveTokenViewSet,
 )
 
@@ -9,7 +9,7 @@ from .views import (
 urlpatterns = [
     path(
         'v1/auth/signup/',
-        UserCreateViewSet.as_view({'post': 'create'}),
+        UserSignupViewSet.as_view({'post': 'create'}),
         name='signup'
     ),
     path(

@@ -6,31 +6,28 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from users.models import User
 from .serializers import (
-    UserCreateSerializer,
+    UserSignupSerializer,
     UserRecieveTokenSerializer,
 )
 from .utils import send_confirmation_code
 
 
-class UserCreateViewSet(
+class UserSignupViewSet(
     mixins.CreateModelMixin,
     viewsets.GenericViewSet
 ):
     """Создание пользователя и отправка кода
     подтверждения на его email.
     """
-    queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
     permission_classes = (permissions.AllowAny,)
 
     def create(self, request):
-        serializer = UserCreateSerializer(data=request.data)
+        serializer = UserSignupSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user, _ = User.objects.get_or_create(**serializer.validated_data)
-        confirmation_code = default_token_generator.make_token(user)
+        user, created = User.objects.get_or_create(**serializer.validated_data)
         send_confirmation_code(
             email=user.email,
-            confirmation_code=confirmation_code
+            confirmation_code=default_token_generator.make_token(user)
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
