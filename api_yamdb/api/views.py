@@ -4,6 +4,7 @@ from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
+from .permissions import IsAdminOrSuperUser
 from users.models import User
 from .serializers import (
     UserSignupSerializer,
@@ -65,4 +66,4 @@ class UserReceiveTokenViewSet(
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAdminOrSuperUser,)
