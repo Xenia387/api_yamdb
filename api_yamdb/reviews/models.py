@@ -57,6 +57,7 @@ class GenreTitle(models.Model):
     title_id = models.ForeignKey(
         Title,
         verbose_name='Произведение',
+        # on_delete=models.SET_NULL,
         related_name='title',
     )
     genre_id = models.ForeignKey(
