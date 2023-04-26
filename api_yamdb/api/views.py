@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.pagination import LimitOffsetPagination
 
 from .permissions import IsAdminOrSuperUser, IsAuthorOrAdminOrReadOnly
 from reviews.models import Category, Genre, Title
@@ -104,21 +105,13 @@ class CategoryViewset(mixins.CreateModelMixin,
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
+    pagination_class = LimitOffsetPagination
 
     def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-            # return Response(status=status.HTTP_401_UNAUTHORIZED)
-        if serializer.is_valid(raise_exception=True):
-            category, created = Category.objects.get_or_create(**serializer.validated_data)
-            self.perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
+        pass
 
     def destroy(self, request, pk):
-        category = Category.objects.filter(pk=id)
-        self.perform_destroy(category)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        pass
 
 
 class GenreViewset(mixins.CreateModelMixin,

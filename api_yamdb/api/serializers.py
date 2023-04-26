@@ -80,13 +80,9 @@ class CategorySerializer(serializers.Serializer):
             'name',
             'slug',
         )
-        read_only_fields = (
-            'id',
-            'name',
-            'slug',
-        )
 
-
+    def create(self, validated_data):
+        return Category.objects.create(**validated_data)
 
 
 class GenreSerializer(serializers.Serializer):
