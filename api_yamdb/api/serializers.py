@@ -68,6 +68,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.Serializer):
+    name = serializers.CharField(
+        max_length=50,
+    )
+    slug = serializers.SlugField()
 
     class Meta:
         model = Category
@@ -81,6 +85,8 @@ class CategorySerializer(serializers.Serializer):
             'name',
             'slug',
         )
+
+
 
 
 class GenreSerializer(serializers.Serializer):
