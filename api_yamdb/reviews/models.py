@@ -24,6 +24,7 @@ class Genre(models.Model):
         verbose_name='Название жанра'
     )
     slug = models.SlugField(
+        # max_length=50,
         unique=True,
         verbose_name='Адрес жанра'
     )
@@ -35,20 +36,27 @@ class Genre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(
-        help_text='Название произведения не должно быть длиннее 500 символов',
-        max_length=500,
+        help_text='Название произведения не должно быть длиннее 256 символов',
+        max_length=256,
         verbose_name='Название произведения'
     )
     year = models.DateTimeField(
         verbose_name='Дата выпуска'
     )
-    category = models.ForeignKey(
+    category = models.OneToOneField(
         Category,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='title',
+        related_name='category_title',
         verbose_name='Категория произведения'
     ),
+    # genre = models.OneToOneField(
+    #     Genre,
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     related_name='genre_title',
+    #     verbose_name='Жанр произведения'
+    # ),
 
     class Meta:
         verbose_name = 'Произведение'
@@ -57,16 +65,20 @@ class Title(models.Model):
 class GenreTitle(models.Model):
     title_id = models.OneToOneField(
         Title,
-        on_delete=models.SET_NULL,
-        null=True,
-        unique=True,
-        related_name='title',
+        on_delete=models.CASCADE,
+        verbose_name='Произведение'
     )
     genre_id = models.OneToOneField(
         Genre,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
         unique=True,
         verbose_name='Жанр(ы)',
-        related_name='genre',
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title_id', 'genre_id'],
+                name='genreoftitle'
+            )
+        ]
