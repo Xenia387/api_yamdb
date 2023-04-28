@@ -64,7 +64,6 @@ class GenreTitle(models.Model):
     genre_id = models.OneToOneField(
         Genre,
         on_delete=models.CASCADE,
-        unique=True,
         verbose_name='Жанр(ы)',
     )
 
