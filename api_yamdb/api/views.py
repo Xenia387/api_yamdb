@@ -110,10 +110,8 @@ class CategoryViewset(mixins.CreateModelMixin,
 
     def create(self, request):
         serializer = CategorySerializer(data=request.data)
-            # return Response(status=status.HTTP_401_UNAUTHORIZED)
         if serializer.is_valid(raise_exception=True):
-            category, created = Category.objects.get_or_create(**serializer.validated_data)
-            self.perform_create(serializer)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer._errors, status=status.HTTP_400_BAD_REQUEST)
@@ -141,7 +139,6 @@ class GenreViewset(mixins.CreateModelMixin,
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-                # return Response(serializer.data, status=status.HTTP_401_UNAUTHORIZED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -160,11 +157,9 @@ class TitleViewset(mixins.CreateModelMixin,
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAuthorOrAdminOrReadOnly,)
-    # pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     pagination_class = None
     filterset_fields = ('name', 'year',)
-    # фильтрация по названию году жанру и категориям slug
 
     def create(self, request):
         if request.method == 'POST':
@@ -177,11 +172,9 @@ class TitleViewset(mixins.CreateModelMixin,
         return Response(status=status.HTTP_200_OK)
 
     def update(self, request, pk=None):
-        # изменяется значения полей name category
         pass
 
     def destroy(self, request, pk):
         title = Title.objects.filter(pk=self.kwargs.get(id))
         title.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        # проверить что запрос удалил объект из БД
