@@ -67,7 +67,11 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class CategorySerializer(serializers.Seriazlizer):
+class CategorySerializer(serializers.Serializer):
+    name = serializers.CharField(
+        max_length=50,
+    )
+    slug = serializers.SlugField()
 
     class Meta:
         model = Category
@@ -76,13 +80,12 @@ class CategorySerializer(serializers.Seriazlizer):
             'name',
             'slug',
         )
-        read_only_fields = (
-            'id',
-            'name',
-            'slug',        )
+
+    def create(self, validated_data):
+        return Category.objects.create(**validated_data)
 
 
-class GenreSerializer(serializers.Seriazlizer):
+class GenreSerializer(serializers.Serializer):
 
     class Meta:
         model = Genre
@@ -98,7 +101,7 @@ class GenreSerializer(serializers.Seriazlizer):
         )
 
 
-class TitleSerializer(serializers.Seriazlizer):
+class TitleSerializer(serializers.Serializer):
 
     class Meta:
         model = Title
@@ -116,7 +119,7 @@ class TitleSerializer(serializers.Seriazlizer):
         )
 
 
-class GenreTitleSerializer(serializers.Seriazlizer):
+class GenreTitleSerializer(serializers.Serializer):
 
     class Meta:
         model = GenreTitle

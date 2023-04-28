@@ -4,10 +4,15 @@ from django.shortcuts import get_object_or_404
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.pagination import LimitOffsetPagination
 
-from .permissions import IsAdminOrSuperUser
+from .permissions import IsAdminOrSuperUser, IsAuthorOrAdminOrReadOnly
+from reviews.models import Category, Genre, Title
 from users.models import User
 from .serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    TitleSerializer,
     UserSignupSerializer,
     UserRecieveTokenSerializer,
     UserSerializer,
@@ -90,3 +95,44 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(role=user.role, partial=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CategoryViewset(mixins.CreateModelMixin,
+                      mixins.ListModelMixin,
+                      mixins.DestroyModelMixin,
+                      viewsets.GenericViewSet):
+    """"Создание и удаление категорий."""
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+    pagination_class = LimitOffsetPagination
+
+    def create(self, request):
+        pass
+
+    def destroy(self, request, pk):
+        pass
+
+
+class GenreViewset(mixins.CreateModelMixin,
+                   mixins.ListModelMixin,
+                   viewsets.GenericViewSet):
+    """Создание и удаление жанров."""
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+
+    def create(self, request):
+        pass
+
+
+class TitleViewset(mixins.CreateModelMixin,
+                   mixins.ListModelMixin,
+                   viewsets.GenericViewSet):
+    """Создание и удаление произведенийю"""
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+
+    def create(self, request):
+        pass

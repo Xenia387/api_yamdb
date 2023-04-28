@@ -3,8 +3,8 @@ from django.db import models
 
 class Category(models.Model):
     name = models.CharField(
-        help_text='Название категории не должно быть длиннее 200 символов',
-        max_length=200,
+        help_text='Название категории не должно быть длиннее 50 символов',
+        max_length=50,
         verbose_name='Название категории'
     )
     slug = models.SlugField(
@@ -42,9 +42,10 @@ class Title(models.Model):
     year = models.DateTimeField(
         verbose_name='Дата выпуска'
     )
-    category = models.OneToOneField(
+    category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
+        null=True,
         related_name='title',
         verbose_name='Категория произведения'
     ),
@@ -54,18 +55,24 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    title_id = models.ForeignKey(
+    title_id = models.OneToOneField(
         Title,
-        on_delete=models.SET_NULL,
-        null=True,
-        unique=True,
-        related_name='title',
+        on_delete=models.CASCADE,
+        verbose_name='Произведение',
     )
-    genre_id = models.ForeignKey(
+    genre_id = models.OneToOneField(
         Genre,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
         unique=True,
         verbose_name='Жанр(ы)',
         related_name='genre',
     )
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title_id', 'genre_id'],
+                name='genreoftitle'
+            )
+]
+
