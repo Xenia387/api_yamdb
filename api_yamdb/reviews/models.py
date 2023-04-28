@@ -50,13 +50,6 @@ class Title(models.Model):
         related_name='category_title',
         verbose_name='Категория произведения'
     ),
-    # genre = models.OneToOneField(
-    #     Genre,
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     related_name='genre_title',
-    #     verbose_name='Жанр произведения'
-    # ),
 
     class Meta:
         verbose_name = 'Произведение'
@@ -66,32 +59,18 @@ class GenreTitle(models.Model):
     title_id = models.OneToOneField(
         Title,
         on_delete=models.CASCADE,
-<<<<<<< HEAD:api_yamdb/reviews/models.py
         verbose_name='Произведение'
-=======
-        verbose_name='Произведение',
->>>>>>> d648d633eb87b233192d150d9588b2a6ce391bbe:api_yamdb/Отзывы/models.py
     )
     genre_id = models.OneToOneField(
         Genre,
         on_delete=models.CASCADE,
-        unique=True,
         verbose_name='Жанр(ы)',
     )
-<<<<<<< HEAD:api_yamdb/reviews/models.py
 
-=======
-    
->>>>>>> d648d633eb87b233192d150d9588b2a6ce391bbe:api_yamdb/Отзывы/models.py
     class Meta:
         constraints = [
             models.UniqueConstraint(
                 fields=['title_id', 'genre_id'],
                 name='genreoftitle'
             )
-<<<<<<< HEAD:api_yamdb/reviews/models.py
         ]
-=======
-]
-
->>>>>>> d648d633eb87b233192d150d9588b2a6ce391bbe:api_yamdb/Отзывы/models.py
