@@ -57,16 +57,22 @@ class Title(models.Model):
 class GenreTitle(models.Model):
     title_id = models.OneToOneField(
         Title,
-        on_delete=models.SET_NULL,
-        null=True,
-        unique=True,
-        related_name='title',
+        on_delete=models.CASCADE,
+        verbose_name='Произведение',
     )
     genre_id = models.OneToOneField(
         Genre,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
         unique=True,
         verbose_name='Жанр(ы)',
         related_name='genre',
     )
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['title_id', 'genre_id'],
+                name='genreoftitle'
+            )
+]
+
