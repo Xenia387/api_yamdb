@@ -13,6 +13,7 @@ class Category(models.Model):
     )
 
     class Meta:
+        ordering = ['slug']
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
@@ -30,6 +31,7 @@ class Genre(models.Model):
     )
 
     class Meta:
+        ordering = ['slug']
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
@@ -43,15 +45,24 @@ class Title(models.Model):
     year = models.DateTimeField(
         verbose_name='Дата выпуска'
     )
-    category = models.OneToOneField(
+    description = models.TextField(
+        verbose_name='Описание произведения'
+    )
+    category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         null=True,
         related_name='category_title',
         verbose_name='Категория произведения'
     ),
+    genre = models.ManyToManyField(
+        Genre,
+        null=True,
+        verbose_name='Жанр(ы) произведения'
+    )
 
     class Meta:
+        ordering = ['year']
         verbose_name = 'Произведение'
 
 
@@ -64,7 +75,6 @@ class GenreTitle(models.Model):
     genre_id = models.OneToOneField(
         Genre,
         on_delete=models.CASCADE,
-        unique=True,
         verbose_name='Жанр(ы)',
     )
 

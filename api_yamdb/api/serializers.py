@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 
@@ -68,10 +70,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        max_length=50,
-    )
-    slug = serializers.SlugField()
+    name = serializers.CharField(max_length=256)
+    slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Category
@@ -90,9 +90,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        max_length=50,
-    )
+    name = serializers.CharField(max_length=256)
     slug = serializers.SlugField(max_length=50)
 
     class Meta:
@@ -114,18 +112,44 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     name = serializers.CharField(
         max_length=256,
+        required=True,
     )
-    year = serializers.IntegerField()
-    category = CategorySerializer(required=True)
+    year = serializers.IntegerField(required=True)
+    description = serializers.CharField()
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all())
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Genre.objects.all())
 
     class Meta:
         model = Title
-        fields = (
-            'id',
-            'name',
-            'year',
-            'category'
-        )
+        fields = '__all__'
+
+    def create(self, validated_data):
+        if 'genre' or 'category' not in self.initial_data:
+            return serializers.ValidationError('Нет такого жанра')
+        else:
+            genre = Genre.objects.all()
+            if isinstance(list, genre):
+                category = Category.objects.all()
+                if isinstance(str, category):
+                    return Title.objects.create(**validated_data)
+
+    def validate(self, data):
+        if Title.objects.filter(name=data['name']).exists():
+            raise serializers.ValidationError(
+                'Такое произведение уже есть'
+            )
+        return data
+
+    def validate_year(self, value):
+        year = datetime.now().year
+        if year < value:
+            raise serializers.ValidationError('Можно добавить только уже вышедшие проивезедения')
+        return value
 
 
 class GenreTitleSerializer(serializers.Serializer):
