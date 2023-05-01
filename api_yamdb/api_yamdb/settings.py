@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'reviews',
     'api',
     'comments',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
