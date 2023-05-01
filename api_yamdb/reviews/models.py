@@ -7,11 +7,12 @@ from users.models import User
 class Category(models.Model):
     name = models.CharField(
         help_text='Название категории не должно быть длиннее 50 символов',
-        max_length=50,
+        max_length=256,
         verbose_name='Название категории'
     )
     slug = models.SlugField(
         unique=True,
+        max_length=50,
         verbose_name='Адрес категории'
     )
 
@@ -28,7 +29,7 @@ class Genre(models.Model):
         verbose_name='Название жанра'
     )
     slug = models.SlugField(
-        # max_length=50,
+        max_length=50,
         unique=True,
         verbose_name='Адрес жанра'
     )
@@ -60,9 +61,7 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(
         Genre,
-        null=True,
-        related_name='genre_title',
-        verbose_name='Жанр(ы) произведения'
+        through='GenreTitle'
     )
 
     class Meta:

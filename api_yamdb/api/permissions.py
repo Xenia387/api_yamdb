@@ -26,7 +26,9 @@ class IsAdminOrOther(permissions.BasePermission):
         """Создавать, изменять и удалять категории, жанры и произведения
         может только админ."""
         return (
-            request.user.is_authenticated
-            and request.user.is_admin
+            (
+                request.user.is_authenticated
+                and request.user.is_admin
+            )
             or request.method in permissions.SAFE_METHODS
         )
