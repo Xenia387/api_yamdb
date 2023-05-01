@@ -23,7 +23,8 @@ class IsAuthorOrAdminOrReadOnly(permissions.BasePermission):
 class IsAdminOrOther(permissions.BasePermission):
     """Разрешение для админа или суперюзера."""
     def has_permission(self, request, view):
-        """Создавать, изменять и удалять категории, жанры и произведения может только админ."""
+        """Создавать, изменять и удалять категории, жанры и произведения
+        может только админ."""
         return (
             request.user.is_authenticated
             and request.user.is_admin

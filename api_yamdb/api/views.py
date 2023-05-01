@@ -14,9 +14,7 @@ from .permissions import (
     IsAuthorOrAdminOrReadOnly,
     IsAdminOrOther
 )
-from reviews.models import Comment, Category, Genre, Title, Review
 from .utils import send_confirmation_code
-from users.models import User
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -27,6 +25,8 @@ from .serializers import (
     UserRecieveTokenSerializer,
     UserSerializer,
 )
+from reviews.models import Category, Genre, Title, Review
+from users.models import User
 
 
 class UserSignupViewSet(
