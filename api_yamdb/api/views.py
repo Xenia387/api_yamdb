@@ -106,7 +106,7 @@ class CategoryViewset(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'delete']
 
     def create(self, request):
-        serializer = GenreSerializer(data=request.data)
+        serializer = CategorySerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
