@@ -67,7 +67,11 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class CategorySerializer(serializers.Seriazlizer):
+class CategorySerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        max_length=50,
+    )
+    slug = serializers.SlugField()
 
     class Meta:
         model = Category
@@ -76,13 +80,20 @@ class CategorySerializer(serializers.Seriazlizer):
             'name',
             'slug',
         )
-        read_only_fields = (
-            'id',
-            'name',
-            'slug',        )
+
+    def validate(self, data):
+        if Category.objects.filter(slug=data['slug']).exists():
+            raise serializers.ValidationError(
+                'Такая категория уже есть'
+            )
+        return data
 
 
-class GenreSerializer(serializers.Seriazlizer):
+class GenreSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        max_length=50,
+    )
+    slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Genre
@@ -91,14 +102,21 @@ class GenreSerializer(serializers.Seriazlizer):
             'name',
             'slug',
         )
-        read_only_fields = (
-            'id',
-            'name',
-            'slug',
-        )
+
+    def validate(self, data):
+        if Genre.objects.filter(slug=data['slug']).exists():
+            raise serializers.ValidationError(
+                'Такой жанр уже есть'
+            )
+        return data
 
 
-class TitleSerializer(serializers.Seriazlizer):
+class TitleSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        max_length=256,
+    )
+    year = serializers.IntegerField()
+    category = CategorySerializer(required=True)
 
     class Meta:
         model = Title
@@ -108,23 +126,13 @@ class TitleSerializer(serializers.Seriazlizer):
             'year',
             'category'
         )
-        read_only_fields = (
-            'id',
-            'name',
-            'year',
-            'category',
-        )
 
 
-class GenreTitleSerializer(serializers.Seriazlizer):
+class GenreTitleSerializer(serializers.Serializer):
 
     class Meta:
         model = GenreTitle
         fields = (
-            'title_id',
-            'genre_id'
-        )
-        read_only_fields = (
             'title_id',
             'genre_id'
         )
