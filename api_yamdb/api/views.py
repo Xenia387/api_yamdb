@@ -1,24 +1,32 @@
 from django.contrib.auth.tokens import default_token_generator
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import action
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
+
 from rest_framework import filters, mixins, permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .permissions import IsAdminOrSuperUser, IsAdminOrOther
-from reviews.models import Category, Genre, Title
+from .filters import TitleFilter
+from .permissions import (
+    IsAdminOrSuperUser,
+    IsAuthorOrAdminOrReadOnly,
+    IsAdminOrOther
+)
+from reviews.models import Comment, Category, Genre, Title, Review
+from .utils import send_confirmation_code
 from users.models import User
 from .serializers import (
     CategorySerializer,
+    CommentSerializer,
     GenreSerializer,
     TitleSerializer,
+    ReviewSerializer,
     UserSignupSerializer,
     UserRecieveTokenSerializer,
     UserSerializer,
 )
-from .utils import send_confirmation_code
-from .filters import TitleFilter
 
 
 class UserSignupViewSet(
@@ -103,6 +111,7 @@ class CategoryViewset(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrOther,)
+    search_fields = ('name',)
     http_method_names = ['get', 'post', 'delete']
 
     def create(self, request):
@@ -127,7 +136,8 @@ class GenreViewset(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrOther,)
-    # pagination_class = CustomPagination
+    pagination_class = LimitOffsetPagination
+    search_fields = ('name',)
     http_method_names = ['get', 'post', 'delete']
 
     def create(self, request):
@@ -141,25 +151,31 @@ class GenreViewset(viewsets.ModelViewSet):
             )
 
     def destroy(self, request, pk=None):
-        Genre.objects.filter(pk=self.kwargs.get(id)).delete()
+        genre = Genre.objects.filter(pk=self.kwargs.get(id))
+        genre.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TitleViewset(viewsets.ModelViewSet):
-    """Создание и удаление произведений."""
-    queryset = Title.objects.all()
-    # queryset = Title.objects.all().annotate(
-    #     rating=Avg('reviews__scrore').order_by('name')
-    # )
+    """Создание, частичное обновление и удаление произведений."""
+    queryset = Title.objects.all().annotate(
+        rating=Avg('reviews__score')
+    ).order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrOther,)
-    filter_backends = (DjangoFilterBackend,)
     pagination_class = None
     filter_class = TitleFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    def perform_create(self, serializer):
-        serializer.save()
+    def create(self, request):
+        serializer = TitleSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
 
     def destroy(self, request, pk):
         Title.objects.filter(pk=self.kwargs.get(id)).delete()
@@ -169,3 +185,44 @@ class TitleViewset(viewsets.ModelViewSet):
         title = Title.objects.filter(pk=self.kwargs.get(id))
         title.update()
         return Response(title, status=status.HTTP_201_CREATED)
+
+
+class ReviewViewset(viewsets.ModelViewSet):
+    """"Работа с отзывами.
+        Получить, добавить,
+        отредактировать, удалить отзыв.
+    """
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+
+    def get_queryset(self):
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        return title.reviews.all()
+
+    def perform_create(self, serializer):
+        title_id = self.kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        serializer.save(author=self.request.user, title=title)
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """"Работа с отзывами к комментариям.
+        Получить, добавить,
+        отредактировать, удалить
+        комментарий к отзыву.
+    """
+    # queryset = Review.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+
+    def get_queryset(self):
+        review_id = self.kwargs.get('review_id')
+        review = get_object_or_404(Review, id=review_id)
+        return review.comments.all()
+
+    def perform_create(self, serializer):
+        review_id = self.kwargs.get('review_id')
+        review = get_object_or_404(Review, id=review_id)
+        serializer.save(author=self.request.user, review=review)
