@@ -70,35 +70,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    name = serializers.CharField(max_length=256)
-    slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Category
-        fields = '__all__'
-
-    def validate(self, data):
-        if Category.objects.filter(slug=data['slug']).exists():
-            raise serializers.ValidationError(
-                'Такая категория уже есть'
-            )
-        return data
+        fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(max_length=256)
-    slug = serializers.SlugField(max_length=50)
 
     class Meta:
         model = Genre
-        fields = '__all__'
-
-    def validate(self, data):
-        if Genre.objects.filter(slug=data['slug']).exists():
-            raise serializers.ValidationError(
-                'Такой жанр уже есть'
-            )
-        return data
+        fields = ('name', 'slug')
 
 
 class TitleSerializer(serializers.ModelSerializer):
