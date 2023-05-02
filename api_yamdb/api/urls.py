@@ -4,10 +4,10 @@ from rest_framework.routers import DefaultRouter
 
 from .views import (
     CategoryViewset,
-    CommentViewSet,
+    # CommentViewSet,
     GenreViewset,
     TitleViewset,
-    ReviewViewset,
+    # ReviewViewset,
     UserSignupViewSet,
     UserReceiveTokenViewSet,
     UserViewSet,
@@ -18,16 +18,16 @@ v1.register('categories', CategoryViewset, basename='categories')
 v1.register('genres', GenreViewset, basename='genres')
 v1.register('titles', TitleViewset, basename='titles')
 v1.register('users', UserViewSet, basename='users')
-v1.register(
-    r'titles/(?P<title_id>\d+)/reviews',
-    ReviewViewset,
-    basename='reviews'
-)
-v1.register(
-    r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
-    CommentViewSet,
-    basename='comments'
-)
+# v1.register(
+#     r'titles/(?P<title_id>\d+)/reviews',
+#     ReviewViewset,
+#     basename='reviews'
+# )
+# v1.register(
+#     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
+#     CommentViewSet,
+#     basename='comments'
+# )
 
 urlpatterns = [
     path(

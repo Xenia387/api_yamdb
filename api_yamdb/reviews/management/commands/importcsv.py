@@ -33,7 +33,8 @@ class Command(BaseCommand):
         for model, csv_file in CSV_DATA.items():
             with open(str(CSV_PATH) + csv_file[0], 'r',) as file:
                 reader = csv.DictReader(
-                    file, delimiter=',', fieldsname=csv_file[1]
+                    file, delimiter=',',
+                    fieldsname=csv_file[1],
                 )
                 for row in reader:
                     record = model(**row)
