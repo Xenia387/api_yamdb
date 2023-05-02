@@ -106,54 +106,35 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CategoryViewset(viewsets.ModelViewSet):
+class CategoryViewset(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     """"Создание и удаление категорий."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrOther,)
     search_fields = ('name',)
-    http_method_names = ['get', 'post', 'delete']
-
-    def create(self, request):
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
-    def destroy(self, request, pk=None):
-        category = Category.objects.filter(pk=self.kwargs.get(id))
-        category.delete()
-        if not category.exists():
-            return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
 
 
-class GenreViewset(viewsets.ModelViewSet):
+class GenreViewset(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     """Создание и удаление жанров."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (IsAdminOrOther,)
     pagination_class = LimitOffsetPagination
     search_fields = ('name',)
-    http_method_names = ['get', 'post', 'delete']
-
-    def create(self, request):
-        serializer = GenreSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
-    def destroy(self, request, pk=None):
-        genre = Genre.objects.filter(pk=self.kwargs.get(id))
-        genre.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    lookup_field = 'slug'
+    filter_backends = (filters.SearchFilter,)
 
 
 class TitleViewset(viewsets.ModelViewSet):
