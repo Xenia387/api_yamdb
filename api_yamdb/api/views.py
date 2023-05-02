@@ -148,15 +148,17 @@ class TitleViewset(viewsets.ModelViewSet):
     filter_class = TitleFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
 
-    def create(self, request):
-        serializer = TitleSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
+    # def create(self, request):
+    #     serializer = TitleSerializer(data=request.data)
+    #     if serializer.is_valid(raise_exception=True):
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     else:
+    #         return Response(
+    #             serializer.errors, status=status.HTTP_400_BAD_REQUEST
+    #         )
+    def perform_create(self, serializer):
+        serializer.save()
 
     def destroy(self, request, pk):
         Title.objects.filter(pk=self.kwargs.get(id)).delete()
