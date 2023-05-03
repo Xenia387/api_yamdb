@@ -2,6 +2,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
@@ -20,6 +21,7 @@ from .serializers import (
     CommentSerializer,
     GenreSerializer,
     TitleSerializer,
+    TitleReadOnlySerializer,
     ReviewSerializer,
     UserSignupSerializer,
     UserRecieveTokenSerializer,
@@ -142,30 +144,14 @@ class TitleViewset(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
         rating=Avg('reviews__score')
     ).order_by('name')
-    serializer_class = TitleSerializer
     permission_classes = (IsAdminOrOther,)
-    pagination_class = None
-    filter_class = TitleFilter
-    http_method_names = ['get', 'post', 'patch', 'delete']
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
-    def create(self, request):
-        serializer = TitleSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
-    def destroy(self, request, pk):
-        Title.objects.filter(pk=self.kwargs.get(id)).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def patch(self, request, pk=None):
-        title = Title.objects.filter(pk=self.kwargs.get(id))
-        title.update()
-        return Response(title, status=status.HTTP_201_CREATED)
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return TitleReadOnlySerializer
+        return TitleSerializer
 
 
 class ReviewViewset(viewsets.ModelViewSet):

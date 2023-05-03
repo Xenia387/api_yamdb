@@ -4,10 +4,8 @@ from reviews.models import Title
 
 
 class TitleFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter()
-    year = django_filters.DateTimeFilter()
-    category__slug = django_filters.CharFilter()
-    genre__slug = django_filters.CharFilter()
+    category = django_filters.CharFilter(field_name='category__slug')
+    genre = django_filters.CharFilter(field_name='genre__slug')
 
     class Meta:
         model = Title
