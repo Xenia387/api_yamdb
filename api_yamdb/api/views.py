@@ -20,6 +20,7 @@ from .serializers import (
     CommentSerializer,
     GenreSerializer,
     TitleSerializer,
+    TitleReadOnlySerializer,
     ReviewSerializer,
     UserSignupSerializer,
     UserRecieveTokenSerializer,
@@ -148,6 +149,14 @@ class TitleViewset(viewsets.ModelViewSet):
     filter_class = TitleFilter
     http_method_names = ['get', 'post', 'patch', 'delete']
 
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return TitleReadOnlySerializer
+        return TitleSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+
     # def create(self, request):
     #     serializer = TitleSerializer(data=request.data)
     #     if serializer.is_valid(raise_exception=True):
@@ -157,17 +166,15 @@ class TitleViewset(viewsets.ModelViewSet):
     #         return Response(
     #             serializer.errors, status=status.HTTP_400_BAD_REQUEST
     #         )
-    def perform_create(self, serializer):
-        serializer.save()
 
-    def destroy(self, request, pk):
-        Title.objects.filter(pk=self.kwargs.get(id)).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # def destroy(self, request, pk):
+    #     Title.objects.filter(pk=self.kwargs.get(id)).delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def patch(self, request, pk=None):
-        title = Title.objects.filter(pk=self.kwargs.get(id))
-        title.update()
-        return Response(title, status=status.HTTP_201_CREATED)
+    # def patch(self, request, pk=None):
+    #     title = Title.objects.filter(pk=self.kwargs.get(id))
+    #     title.update()
+    #     return Response(title, status=status.HTTP_201_CREATED)
 
 
 class ReviewViewset(viewsets.ModelViewSet):

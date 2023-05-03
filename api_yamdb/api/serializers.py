@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.shortcuts import get_object_or_404
 
@@ -98,6 +100,11 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
 
+    def validate_year(self, value):
+        if value > datetime.now().year:
+            raise serializers.ValidationError('Можно добавить только уж вышедший произведения')
+        return value
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         reviews = Review.objects.filter(title=data['id'])
@@ -107,6 +114,16 @@ class TitleSerializer(serializers.ModelSerializer):
                 result += review.rating
             data['ratings='] = result / reviews.__len__()
         return data
+
+
+class TitleReadOnlySerializer(serializers.ModelSerializer):
+    rating = serializers.IntegerField(read_only=True)
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Title
+        fields = '__all__'
 
 
 class GenreTitleSerializer(serializers.Serializer):
