@@ -70,12 +70,12 @@ class Title(models.Model):
 
 
 class GenreTitle(models.Model):
-    title_id = models.OneToOneField(
+    title_id = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
         verbose_name='Произведение'
     )
-    genre_id = models.OneToOneField(
+    genre_id = models.ForeignKey(
         Genre,
         on_delete=models.CASCADE,
         verbose_name='Жанр(ы)',
