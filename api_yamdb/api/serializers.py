@@ -100,21 +100,6 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
 
-    def validate_year(self, value):
-        if value > datetime.now().year:
-            raise serializers.ValidationError('Можно добавить только уж вышедший произведения')
-        return value
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        reviews = Review.objects.filter(title=data['id'])
-        if reviews.__len__() != 0:
-            result = 0
-            for review in reviews:
-                result += review.rating
-            data['ratings='] = result / reviews.__len__()
-        return data
-
 
 class TitleReadOnlySerializer(serializers.ModelSerializer):
     rating = serializers.IntegerField(read_only=True)
