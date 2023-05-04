@@ -13,7 +13,7 @@ from .filters import TitleFilter
 from .permissions import (
     IsAdminOrSuperUser,
     IsAuthorOrAdminOrReadOnly,
-    IsAdminOrOther
+    IsAdminOrOther,
 )
 from .utils import send_confirmation_code
 from .serializers import (
@@ -161,7 +161,7 @@ class ReviewViewset(viewsets.ModelViewSet):
     """
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthorOrAdminOrReadOnly,)
+    # permission_classes = (IsAuthorOrAdminOrReadOnly,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
@@ -182,7 +182,6 @@ class CommentViewSet(viewsets.ModelViewSet):
     """
     # queryset = Review.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthorOrAdminOrReadOnly,)
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')
