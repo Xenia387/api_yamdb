@@ -120,10 +120,12 @@ class Review(models.Model):
         ordering = ('pub_date',)
         constraints = [
             models.UniqueConstraint(
-                fields=('title', 'author'),
-                name='unique_constraint'
+                fields=['title', 'author'],
+                name='unique_review'
             )
         ]
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
 
     def __str__(self):
         return self.text
@@ -135,15 +137,14 @@ class Comment(models.Model):
         on_delete=models.CASCADE,
         related_name='comments',
     )
-    text = models.TextField(
-        help_text='Комментарий не более 1000 символов',
-        max_length=1000,
-        verbose_name='Текст комментария',
-    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='comments',
+    )
+    text = models.TextField(
+        help_text='Комментарий',
+        verbose_name='Текст комментария',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -151,4 +152,9 @@ class Comment(models.Model):
     )
 
     class Meta:
-        ordering = ('id', )
+        ordering = ('-pub_date',)
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return self.text
