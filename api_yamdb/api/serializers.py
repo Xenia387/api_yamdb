@@ -123,7 +123,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
-        # unique=True,
     )
     title = serializers.SlugRelatedField(
         slug_field='name',
@@ -145,7 +144,9 @@ class ReviewSerializer(serializers.ModelSerializer):
                 author=author,
             )
             if review.exists():
-                raise 'Вы уже оставляли отзыв.'
+                raise serializers.ValidationError(
+                    'Вы уже оставляли отзыв.'
+                )
         return data
 
 
@@ -153,7 +154,6 @@ class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field='username',
         read_only=True,
-        # unique=True,
     )
 
     class Meta:
