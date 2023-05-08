@@ -1,6 +1,9 @@
 from datetime import timedelta
 from pathlib import Path
 
+# Основные константы
+USERNAME_MAX_LENGTH = 150
+EMAIL_MAX_LENGTH = 254
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

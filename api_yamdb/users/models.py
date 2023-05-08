@@ -1,17 +1,20 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from api_yamdb.settings import EMAIL_MAX_LENGTH
+
+USER_ROLES = (
+    ('user', 'user'),
+    ('moderator', 'moderator'),
+    ('admin', 'admin'),
+)
+
 
 class User(AbstractUser):
 
-    class UserRoles(models.TextChoices):
-        USER = 'user'
-        MODERATOR = 'moderator'
-        ADMIN = 'admin'
-
     email = models.EmailField(
         verbose_name='Email адрес',
-        max_length=254,
+        max_length=EMAIL_MAX_LENGTH,
         blank=False,
         unique=True
     )
@@ -21,23 +24,23 @@ class User(AbstractUser):
     )
     role = models.CharField(
         verbose_name='Роль',
-        max_length=16,
-        choices=UserRoles.choices,
-        default=UserRoles.USER,
+        max_length=32,
+        choices=USER_ROLES,
+        default='user',
         blank=False
     )
+
+    class Meta:
+        ordering = ('username',)
 
     @property
     def is_admin(self):
         return (
-            self.role == self.UserRoles.ADMIN
+            self.role == 'admin'
             or self.is_superuser
             or self.is_staff
         )
 
     @property
     def is_moderator(self):
-        return self.role == self.UserRoles.MODERATOR
-
-    class Meta:
-        ordering = ('username',)
+        return self.role == 'moderator'
