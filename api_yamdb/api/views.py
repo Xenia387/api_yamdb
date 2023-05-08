@@ -8,14 +8,14 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .filters import TitleFilter
-from .permissions import (
+from api.filters import TitleFilter
+from api.permissions import (
     IsAdminOrSuperUser,
     IsAuthorOrAdminOrReadOnly,
     IsAdminOrOther,
 )
-from .utils import send_confirmation_code
-from .serializers import (
+from api.utils import send_confirmation_code
+from api.serializers import (
     CategorySerializer,
     CommentSerializer,
     GenreSerializer,
@@ -142,7 +142,7 @@ class TitleViewset(viewsets.ModelViewSet):
     """Создание, частичное обновление и удаление произведений."""
     queryset = Title.objects.all().annotate(
         rating=Avg('reviews__score')
-    ).order_by('name')
+    )
     permission_classes = (IsAdminOrOther,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
