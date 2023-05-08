@@ -1,7 +1,6 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
@@ -31,10 +30,23 @@ from reviews.models import Category, Genre, Title, Review, Comment
 from users.models import User
 
 
-class UserSignupViewSet(
+class CreateViewSet(
     mixins.CreateModelMixin,
     viewsets.GenericViewSet
 ):
+    pass
+
+
+class CreateDestroyListViewSet(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
+    pass
+
+
+class UserSignupViewSet(CreateViewSet):
     """Создание пользователя и отправка кода
     подтверждения на его email.
     """
@@ -51,10 +63,7 @@ class UserSignupViewSet(
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserReceiveTokenViewSet(
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
-):
+class UserReceiveTokenViewSet(CreateViewSet):
     """Выдача JWT токена."""
     queryset = User.objects.all()
     serializer_class = UserRecieveTokenSerializer
@@ -97,7 +106,7 @@ class UserViewSet(viewsets.ModelViewSet):
         ],
         url_path='me',
     )
-    def himself(self, request):
+    def me(self, request):
         user = request.user
         if request.method == 'GET':
             serializer = self.get_serializer(user)
@@ -108,12 +117,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CategoryViewset(
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
-):
+class CategoryViewset(CreateDestroyListViewSet):
     """"Создание и удаление категорий."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -123,12 +127,7 @@ class CategoryViewset(
     filter_backends = (filters.SearchFilter,)
 
 
-class GenreViewset(
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.ListModelMixin,
-    viewsets.GenericViewSet
-):
+class GenreViewset(CreateDestroyListViewSet):
     """Создание и удаление жанров."""
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
@@ -163,15 +162,20 @@ class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthorOrAdminOrReadOnly, ]
 
+    def get_title(self):
+        return get_object_or_404(
+            Title,
+            id=self.kwargs.get('title_id')
+        )
+
     def get_queryset(self):
-        title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Title, id=title_id)
-        return title.reviews.all()
+        return self.get_title().reviews.all()
 
     def perform_create(self, serializer):
-        title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Title, id=title_id)
-        serializer.save(author=self.request.user, title=title)
+        serializer.save(
+            author=self.request.user,
+            title=self.get_title()
+        )
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -184,12 +188,17 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthorOrAdminOrReadOnly, ]
 
+    def get_review(self):
+        return get_object_or_404(
+            Review,
+            id=self.kwargs.get('review_id')
+        )
+
     def get_queryset(self):
-        review_id = self.kwargs.get('review_id')
-        review = get_object_or_404(Review, id=review_id)
-        return review.comments.all()
+        return self.get_review().comments.all()
 
     def perform_create(self, serializer):
-        review_id = self.kwargs.get('review_id')
-        review = get_object_or_404(Review, id=review_id)
-        serializer.save(author=self.request.user, review=review)
+        serializer.save(
+            author=self.request.user,
+            review=self.get_review()
+        )

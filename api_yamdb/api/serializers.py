@@ -1,28 +1,33 @@
+import re
+
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.shortcuts import get_object_or_404
-
 from rest_framework import serializers
 
+from api_yamdb.settings import USERNAME_MAX_LENGTH, EMAIL_MAX_LENGTH
 from reviews.models import Comment, Category, Genre, GenreTitle, Title, Review
 from users.models import User
 
 
 class UserSignupSerializer(serializers.Serializer):
 
-    username = serializers.RegexField(
-        regex=r'' + UnicodeUsernameValidator.regex,
-        max_length=150,
+    username = serializers.CharField(
+        max_length=USERNAME_MAX_LENGTH,
         required=True
     )
     email = serializers.EmailField(
-        max_length=254,
+        max_length=EMAIL_MAX_LENGTH,
         required=True
     )
 
     def validate_username(self, value):
-        if value == 'me':
+        if value.lower() == 'me':
             raise serializers.ValidationError(
-                'Нельзя использовать username "me".'
+                f'Нельзя использовать username "{value}".'
+            )
+        if not re.match(UnicodeUsernameValidator.regex, value):
+            raise serializers.ValidationError(
+                UnicodeUsernameValidator.message
             )
         return value
 
@@ -46,7 +51,7 @@ class UserRecieveTokenSerializer(serializers.Serializer):
 
     username = serializers.RegexField(
         regex=r'' + UnicodeUsernameValidator.regex,
-        max_length=150,
+        max_length=USERNAME_MAX_LENGTH,
         required=True
     )
     confirmation_code = serializers.CharField(
