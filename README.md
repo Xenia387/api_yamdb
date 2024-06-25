@@ -30,6 +30,8 @@ django-filter==23.2
 
 - Cоздать и активировать виртуальное окружение:  
    `python3 -m venv env source env/bin/activate`
+  или
+   `python -m venv env source venv/Scripts/activate`
 
 - Установить зависимости из файла requirements.txt:  
    `python3 -m pip install --upgrade pip pip install -r requirements.txt`
@@ -78,5 +80,8 @@ python manage.py <название файла, в котором описана 
 ### Авторы:
 
 Анисимова Ксения - https://github.com/Xenia387
+email: anis.xenia@yandex.ru
+telegram: @Ksenia_An_mova
+
 Андреев Алексей - https://github.com/andreeval
 Сергей Епифанов - https://github.com/segaru7
