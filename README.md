@@ -28,19 +28,35 @@
    `git clone git@github.com:Xenia387/api_yamdb.git`  
   `cd api_yamdb`
 
-- Cоздать и активировать виртуальное окружение:  
-   `python3 -m venv env source env/bin/activate`
+- Установите и активируйте виртуальное окружение
+
+```
+python3 -m venv env
+```
+
+```
+source env/bin/activate
+```
+
   или
-   `python -m venv env source venv/Scripts/activate`
 
-- Установить зависимости из файла requirements.txt:  
-   `python3 -m pip install --upgrade pip pip install -r requirements.txt`
+```
+python -m venv env
+```
 
-- Выполнить миграции:  
-   `python3 manage.py migrate`
+```
+source venv/Scripts/activate
+```
 
-- Запустить проект:  
-   `python3 manage.py runserver`
+- Установите зависимости из файла requirements.txt
+  
+```
+python -m pip install --upgrade pip
+```
+
+```bash
+pip install -r requirements.txt
+```
 
 ### Начало работы с API:
 
