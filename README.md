@@ -27,6 +27,9 @@
 - Клонировать репозиторий и перейти в него в командной строке:
 ```bash
 git clone git@github.com:Xenia387/api_yamdb.git
+```
+
+```
 cd api_yamdb
 ```
 
