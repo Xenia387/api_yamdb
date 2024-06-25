@@ -25,7 +25,7 @@
 ### Запуск проекта
 
 - Клонировать репозиторий и перейти в него в командной строке:  
-   `git clone git@github.com:Xenia387/api_yamdb.git`  
+   `git clone git@github.com:Xenia387/api_yamdb.git`bash  
   `cd api_yamdb`
 
 - Установите и активируйте виртуальное окружение
