@@ -12,15 +12,15 @@
 Все ресурсы API будут доступны по адресу http://127.0.0.1:8000/redoc/ после запуска проекта.
 
 ### Технологии:
-requests==2.26.0
-Django==3.2
-djangorestframework==3.12.4
-PyJWT==2.1.0
-pytest==6.2.4
-pytest-django==4.4.0
-pytest-pythonpath==0.7.3
-djangorestframework-simplejwt==4.7.2
-django-filter==23.2
+- requests==2.26.0
+- Django==3.2
+- djangorestframework==3.12.4
+- PyJWT==2.1.0
+- pytest==6.2.4
+- pytest-django==4.4.0
+- pytest-pythonpath==0.7.3
+- djangorestframework-simplejwt==4.7.2
+- django-filter==23.2
 
 ### Запуск проекта
 
