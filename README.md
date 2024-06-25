@@ -59,9 +59,24 @@ source venv/Scripts/activate
 python -m pip install --upgrade pip
 ```
 
-```bash
+```
 pip install -r requirements.txt
 ```
+
+- Выполните миграции
+
+```
+cd api_yamdb
+```
+
+```
+python manage.py makemigrations
+```
+
+```bash
+python manage.py migrate
+```
+
 
 ### Начало работы с API:
 
