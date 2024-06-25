@@ -80,8 +80,8 @@ python manage.py <название файла, в котором описана 
 ### Авторы:
 
 Анисимова Ксения - https://github.com/Xenia387
-email: anis.xenia@yandex.ru
-telegram: @Ksenia_An_mova
+- email: anis.xenia@yandex.ru
+- telegram: @Ksenia_An_mova
 
 Андреев Алексей - https://github.com/andreeval
 Сергей Епифанов - https://github.com/segaru7
